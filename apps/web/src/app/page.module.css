@@ -1,0 +1,75 @@
+.page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+}
+
+.shell {
+  width: min(100%, 1120px);
+}
+
+.title {
+  margin: 0 0 12px;
+  font-size: 40px;
+  line-height: 1.1;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.paperSizeGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.paperSizeButton,
+.paperSizeActive {
+  min-width: 56px;
+  border-color: #d1d5db;
+  color: #1f2937;
+  background: #ffffff;
+}
+
+.paperSizeActive {
+  border-color: #0f766e;
+  color: #ffffff;
+  background: #0f766e;
+}
+
+.syncing,
+.synced {
+  min-width: 72px;
+  color: #6b7280;
+  font-size: 14px;
+  text-align: right;
+  transition: opacity 150ms ease;
+}
+
+.syncing {
+  opacity: 1;
+}
+
+.synced {
+  opacity: 0;
+}
+
+.tableWrap {
+  margin-bottom: 24px;
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.statusCell {
+  height: 96px;
+  text-align: center;
+  color: #6b7280;
+}
