@@ -1,8 +1,8 @@
 # Raksul Price Table
 
-Web application hien thi bang gia in an theo paper size. Project duoc to chuc theo monorepo dung pnpm workspace, gom Next.js app va cac package dung chung cho API client/UI.
+A web application for displaying printing prices by paper size. The project is organized as a pnpm monorepo with a Next.js application and shared API/UI packages.
 
-## Tech stack
+## Tech Stack
 
 - pnpm workspace
 - Next.js 16, React 19
@@ -11,111 +11,113 @@ Web application hien thi bang gia in an theo paper size. Project duoc to chuc th
 - Vitest
 - Playwright
 - ESLint, Prettier
+- GitHub Actions
 
-## Cau truc project
+## Project Structure
 
 ```txt
 apps/
   web/                 Next.js application
-    src/app/           App Router pages va API routes
+    src/app/           App Router pages and API routes
     src/providers/     React providers
     tests/e2e/         Playwright tests
 
 packages/
-  api/                 API client, types, query hooks
+  api/                 API client, types, and query hooks
   ui/                  Shared UI components
 ```
 
-Mot so file quan trong:
+Important files:
 
-- `apps/web/src/app/page.tsx`: man hinh bang gia chinh.
-- `apps/web/src/app/api/prices/route.ts`: API route proxy den Raksul prices API.
-- `packages/api/src/prices.ts`: ham fetch prices.
-- `packages/api/src/paper-size.ts`: normalize paper size, fallback ve `A4`.
-- `packages/api/src/react/use-prices-query.ts`: TanStack Query hook cho prices.
+- `apps/web/src/app/page.tsx`: main price table screen.
+- `apps/web/src/app/api/prices/route.ts`: API route that proxies requests to the Raksul prices API.
+- `packages/api/src/prices.ts`: prices API client.
+- `packages/api/src/paper-size.ts`: paper size normalization with `A4` fallback.
+- `packages/api/src/react/use-prices-query.ts`: TanStack Query hook for prices.
 - `packages/ui/src/table.tsx`: shared table components.
+- `.github/workflows/ci.yml`: GitHub Actions workflow for typecheck, lint, and coverage tests.
 
-## Yeu cau moi truong
+## Requirements
 
-Can cai dat:
+Install:
 
-- Node.js phien ban tuong thich voi Next.js 16
+- Node.js compatible with Next.js 16
 - pnpm `10.26.0`
 
-Neu chua co pnpm:
+If pnpm is not installed:
 
 ```bash
 corepack enable
 corepack prepare pnpm@10.26.0 --activate
 ```
 
-## Cai dat
+## Installation
 
-Clone project va cai dependencies:
+Install dependencies from the repository root:
 
 ```bash
 pnpm install
 ```
 
-## Cau hinh bien moi truong
+## Environment Variables
 
-Project can bien `RAKSUL_PRICES_API_URL` de Next API route biet endpoint lay gia.
+The application requires `RAKSUL_PRICES_API_URL` so the Next.js API route knows which upstream endpoint to call.
 
-Root repo da co file mau:
+The repository includes an example file:
 
 ```bash
 .env.example
 ```
 
-Noi dung hien tai:
+Current value:
 
 ```env
 RAKSUL_PRICES_API_URL=https://us-central1-fe-ws-test.cloudfunctions.net/prices
 ```
 
-Voi Next app trong workspace nay, hay tao file:
+For local development, create:
 
 ```bash
 apps/web/.env.local
 ```
 
-Noi dung:
+With:
 
 ```env
 RAKSUL_PRICES_API_URL=https://us-central1-fe-ws-test.cloudfunctions.net/prices
 ```
 
-Ghi chu:
+Notes:
 
-- `.env.local` da nam trong `.gitignore`, khong commit file nay.
-- Sau khi thay doi env, can restart dev server.
-- Neu thieu bien nay, `/api/prices` se tra ve loi `Missing RAKSUL_PRICES_API_URL`.
+- `.env.local` is ignored by git and should not be committed.
+- Restart the dev server after changing environment variables.
+- If this variable is missing, `/api/prices` returns `Missing RAKSUL_PRICES_API_URL`.
 
-## Chay development server
+## Development
 
-Tu root repo:
+Start the development server from the repository root:
 
 ```bash
 pnpm dev
 ```
 
-Mac dinh app chay tai:
+The app usually runs at:
 
 ```txt
 http://localhost:3000
 ```
 
-Neu port `3000` dang ban, Next co the chon port khac va in URL trong terminal.
+If port `3000` is already in use, Next.js may choose another port and print the URL in the terminal.
 
-## Kiem tra API route
+## API Route Check
 
-Sau khi dev server chay, co the test nhanh:
+After the dev server is running, verify the API route:
 
 ```bash
 curl "http://localhost:3000/api/prices?paper_size=A4"
 ```
 
-Ket qua mong doi la JSON co dang:
+Expected response shape:
 
 ```json
 {
@@ -132,36 +134,36 @@ Ket qua mong doi la JSON co dang:
 }
 ```
 
-App ho tro cac paper size:
+Supported paper sizes:
 
 - `A4`
 - `A5`
 - `B4`
 - `B5`
 
-Gia tri paper size khong hop le se duoc normalize ve `A4`.
+Invalid paper size values are normalized to `A4`.
 
-## Scripts thuong dung
+## Scripts
 
-Chay app:
+Start the app:
 
 ```bash
 pnpm dev
 ```
 
-Build tat ca workspace packages:
+Build all workspace packages:
 
 ```bash
 pnpm build
 ```
 
-Typecheck:
+Run TypeScript checks:
 
 ```bash
 pnpm typecheck
 ```
 
-Lint:
+Run ESLint:
 
 ```bash
 pnpm lint
@@ -173,82 +175,113 @@ Format code:
 pnpm format
 ```
 
-Kiem tra format:
+Check formatting:
 
 ```bash
 pnpm format:check
 ```
 
-Unit/component tests bang Vitest:
+Run Vitest unit tests:
 
 ```bash
 pnpm test:run
 ```
 
-E2E tests bang Playwright:
+Run Vitest tests with coverage:
+
+```bash
+pnpm test:coverage
+```
+
+Run Playwright E2E tests:
 
 ```bash
 pnpm test:e2e
 ```
 
-## Workflow phat trien
+## Testing
 
-Quy trinh khuyen nghi truoc khi day code:
+The project includes:
+
+- Unit tests for paper size normalization.
+- Unit tests for the prices API client.
+- Unit tests for the Next.js `/api/prices` route error handling.
+- Playwright E2E tests for:
+  - application shell rendering
+  - price updates when changing paper size
+  - error state when the API fails
+
+Recommended verification before pushing changes:
+
+```bash
+pnpm format:check
+pnpm typecheck
+pnpm lint
+pnpm test:coverage
+pnpm test:e2e
+pnpm build
+```
+
+## CI
+
+GitHub Actions runs on pull requests and pushes to `main`.
+
+The CI workflow runs:
 
 ```bash
 pnpm typecheck
 pnpm lint
-pnpm test:run
-pnpm test:e2e
+pnpm test:coverage
 ```
 
-Khi lam viec voi UI:
+Workflow file:
 
-1. Chay `pnpm dev`.
-2. Mo `http://localhost:3000`.
-3. Chon paper size tren toolbar.
-4. Xac nhan bang gia render dung quantity va business day.
-5. Kiem tra loading/error state neu API bi loi hoac env bi thieu.
+```txt
+.github/workflows/ci.yml
+```
 
-## Luong du lieu hien tai
+## Data Flow
 
-1. User chon paper size tren `apps/web/src/app/page.tsx`.
-2. `usePricesQuery` goi `/api/prices?paper_size=<size>`.
-3. Next route `apps/web/src/app/api/prices/route.ts` doc `RAKSUL_PRICES_API_URL`.
-4. `fetchPrices` goi remote API va tu dong gan query param `paper_size`.
-5. UI gom du lieu theo `quantity`, tao cot theo `business_day`, roi render bang.
+1. The user selects a paper size on `apps/web/src/app/page.tsx`.
+2. `usePricesQuery` requests `/api/prices?paper_size=<size>`.
+3. `apps/web/src/app/api/prices/route.ts` reads `RAKSUL_PRICES_API_URL`.
+4. `fetchPrices` calls the upstream API and appends the `paper_size` query parameter.
+5. The UI groups the response by `quantity`, creates columns from `business_day`, and renders the table.
+
+## UI Behavior
+
+- The table keeps the previous data while a new paper size is loading.
+- A lightweight `Updating...` indicator appears during background fetching.
+- Initial loading, empty, and error states are rendered inside the table.
+- The table wrapper supports horizontal scrolling on smaller screens.
 
 ## Troubleshooting
 
-### API tra ve `Missing RAKSUL_PRICES_API_URL`
+### API returns `Missing RAKSUL_PRICES_API_URL`
 
-Kiem tra file `apps/web/.env.local` da ton tai va co dung bien:
+Check that `apps/web/.env.local` exists and includes:
 
 ```env
 RAKSUL_PRICES_API_URL=https://us-central1-fe-ws-test.cloudfunctions.net/prices
 ```
 
-Sau do restart `pnpm dev`.
-
-### Dev server bao port 3000 dang duoc dung
-
-Co the dung URL port moi ma Next in ra terminal, hoac tat process dang giu port 3000 roi chay lai:
+Then restart:
 
 ```bash
 pnpm dev
 ```
 
-### `pnpm test:run` bao khong co test file
+### Port 3000 is already in use
 
-Hien tai repo co cau hinh Vitest nhung chua co unit test file. Day khong phai loi runtime. Nen them test cho:
+Use the alternate URL printed by Next.js, or stop the process using port `3000` and run:
 
-- `normalizePaperSize`
-- `fetchPrices`
-- UI render bang gia
+```bash
+pnpm dev
+```
 
-### Playwright chua cai browser
+### Playwright browsers are missing
 
-Neu `pnpm test:e2e` loi vi thieu browser, chay:
+If `pnpm test:e2e` fails because browsers are not installed, run:
 
 ```bash
 pnpm exec playwright install
