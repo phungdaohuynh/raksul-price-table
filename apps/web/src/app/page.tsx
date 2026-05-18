@@ -15,7 +15,9 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
+  Tooltip,
+  Typography
 } from "@raksul-price-table/ui";
 import { useMemo, useState } from "react";
 import styles from "./page.module.css";
@@ -35,7 +37,6 @@ type HoveredCell = {
 
 export default function Home() {
   const [paperSize, setPaperSize] = useState<PaperSize>("A4");
-  const [draftPaperSize, setDraftPaperSize] = useState<PaperSize>("A4");
   const [showAllRows, setShowAllRows] = useState(false);
   const [selectedPrice, setSelectedPrice] = useState<SelectedPrice | null>(null);
   const [hoveredCell, setHoveredCell] = useState<HoveredCell>(null);
@@ -50,8 +51,8 @@ export default function Home() {
   const isUpdating = pricesQuery.isFetching && !isInitialLoading;
   const canSeeMore = !showAllRows && table.rows.length > INITIAL_ROW_COUNT;
 
-  function applyPaperSize() {
-    setPaperSize(draftPaperSize);
+  function selectPaperSize(size: PaperSize) {
+    setPaperSize(size);
     setShowAllRows(false);
     setSelectedPrice(null);
     setHoveredCell(null);
@@ -65,12 +66,17 @@ export default function Home() {
         </h1>
         <div className={styles.contentGrid}>
           <aside className={styles.paperPanel}>
-            <h2 className={styles.panelTitle}>Select paper size</h2>
+            <Typography className={styles.panelTitle} variant="panelTitle">
+              Select paper size
+              <Tooltip label="Changing paper size resets the selected price and collapses expanded rows.">
+                ?
+              </Tooltip>
+            </Typography>
             <Select
               aria-label="Paper size"
               className={styles.paperSelect}
-              onChange={(event) => setDraftPaperSize(event.target.value as PaperSize)}
-              value={draftPaperSize}
+              onChange={(event) => selectPaperSize(event.target.value as PaperSize)}
+              value={paperSize}
             >
               {PAPER_SIZES.map((size) => (
                 <option key={size} value={size}>
@@ -78,19 +84,21 @@ export default function Home() {
                 </option>
               ))}
             </Select>
-            <Button className={styles.applyButton} onClick={applyPaperSize}>
-              Apply
-            </Button>
           </aside>
 
           <section className={styles.tablePanel} aria-labelledby="price-table-title">
             <div className={styles.tablePanelHeader}>
-              <h2 className={styles.panelTitle} id="price-table-title">
+              <Typography className={styles.panelTitle} id="price-table-title" variant="panelTitle">
                 Price table
-              </h2>
-              <div aria-live="polite" className={isUpdating ? styles.syncing : styles.synced}>
+              </Typography>
+              <Typography
+                aria-live="polite"
+                as="div"
+                className={isUpdating ? styles.syncing : styles.synced}
+                variant="muted"
+              >
                 Updating...
-              </div>
+              </Typography>
             </div>
             <div className={styles.tableWrap}>
               <Table aria-busy={pricesQuery.isFetching}>
@@ -209,11 +217,16 @@ export default function Home() {
         </div>
 
         <section className={styles.orderBar} aria-label="Order summary">
-          <p className={styles.orderPrice}>
-            Order price:{" "}
-            <span>{selectedPrice ? `¥${formatNumberWithCommas(selectedPrice.price)}` : "-"}</span>
-          </p>
-          <Button className={styles.cartButton}>Cart</Button>
+          <Typography variant="order">
+            {selectedPrice ? (
+              <>
+                Order price: <span>¥{formatNumberWithCommas(selectedPrice.price)}</span>
+              </>
+            ) : (
+              "Select a price to continue"
+            )}
+          </Typography>
+          {selectedPrice ? <Button className={styles.cartButton}>Cart</Button> : null}
         </section>
       </section>
     </main>
@@ -254,7 +267,7 @@ function StatusRow({ children, colSpan }: { children: string; colSpan: number })
   return (
     <TableRow>
       <TableCell className={styles.statusCell} colSpan={colSpan}>
-        {children}
+        <Typography variant="muted">{children}</Typography>
       </TableCell>
     </TableRow>
   );

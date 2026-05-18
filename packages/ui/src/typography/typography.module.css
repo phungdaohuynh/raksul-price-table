@@ -1,0 +1,31 @@
+.root {
+  margin: 0;
+}
+
+.body {
+  color: #111827;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.muted {
+  color: #6b7280;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.order {
+  color: #111827;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.panelTitle {
+  color: #111827;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.2;
+}

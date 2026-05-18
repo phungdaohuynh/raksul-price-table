@@ -1,0 +1,43 @@
+.root {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #9ca3af;
+  border-radius: 50%;
+  color: #4b5563;
+  background: #ffffff;
+  font-size: 12px;
+  line-height: 1;
+  cursor: help;
+}
+
+.content {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  z-index: 2;
+  width: 220px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: #ffffff;
+  background: #111827;
+  font-size: 12px;
+  line-height: 1.4;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+  transition: opacity 150ms ease;
+}
+
+.trigger:hover + .content,
+.trigger:focus + .content {
+  opacity: 1;
+}

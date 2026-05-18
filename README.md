@@ -24,7 +24,7 @@ apps/
 
 packages/
   api/                 API client, types, and query hooks
-  ui/                  Shared UI components
+  ui/                  Shared UI components, organized by component folder
 ```
 
 Important files:
@@ -34,7 +34,7 @@ Important files:
 - `packages/api/src/prices.ts`: prices API client.
 - `packages/api/src/paper-size.ts`: paper size normalization with `A4` fallback.
 - `packages/api/src/react/use-prices-query.ts`: TanStack Query hook for prices.
-- `packages/ui/src/table.tsx`: shared table components.
+- `packages/ui/src/*/index.tsx`: shared UI components such as Button, Select, Table, Tooltip, and Typography.
 - `.github/workflows/ci.yml`: GitHub Actions workflow for typecheck, lint, and coverage tests.
 
 ## Requirements
@@ -204,12 +204,40 @@ pnpm test:e2e
 The project includes:
 
 - Unit tests for paper size normalization.
+- Unit tests for comma-separated number formatting.
 - Unit tests for the prices API client.
 - Unit tests for the Next.js `/api/prices` route error handling.
 - Playwright E2E tests for:
   - application shell rendering
   - price updates when changing paper size
+  - selected price display and Cart visibility
+  - selected state reset when changing paper size
+  - See more row expansion and table body scrolling
+  - hovered cell, row, and column highlighting
   - error state when the API fails
+
+## Implemented Requirements
+
+Task 1-a core functionality:
+
+- Users can view prices in a table where rows are quantities and columns are delivery business days.
+- Users can select `A4`, `A5`, `B4`, or `B5` and view the corresponding price table.
+
+Task 1-b add-on functionality:
+
+- Users can click a price cell to select it.
+- The selected price cell is highlighted.
+- The selected price is displayed in the order summary.
+- The initial table shows 5 quantity rows.
+- `See more` displays all available quantity rows.
+- Hovering over a price highlights the cell and weakly highlights its related row and column.
+
+Task 2 number formatting:
+
+- Prices and quantities are formatted with commas every 3 digits.
+- Formatting is implemented by `formatNumberWithCommas`.
+- The formatter has unit tests.
+- The implementation does not use `toLocaleString()` or `Intl.NumberFormat()`.
 
 Recommended verification before pushing changes:
 
@@ -254,6 +282,8 @@ Workflow file:
 - A lightweight `Updating...` indicator appears during background fetching.
 - Initial loading, empty, and error states are rendered inside the table.
 - The table wrapper supports horizontal scrolling on smaller screens.
+- Changing paper size resets the selected price and collapses expanded rows.
+- `Cart` is hidden until a price is selected.
 
 ## Troubleshooting
 

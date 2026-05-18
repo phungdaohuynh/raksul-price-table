@@ -64,27 +64,18 @@
 }
 
 .panelTitle {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .paperSelect {
   margin-top: 20px;
 }
 
-.applyButton {
-  width: 84px;
-  margin-top: auto;
-  margin-left: auto;
-}
-
 .syncing,
 .synced {
   min-width: 92px;
-  color: #6b7280;
-  font-size: 16px;
   text-align: right;
   transition: opacity 150ms ease;
 }
@@ -165,11 +156,6 @@
   padding: 20px;
 }
 
-.orderPrice {
-  margin: 0;
-  font-size: 28px;
-}
-
 .cartButton {
   width: 84px;
 }
@@ -195,10 +181,6 @@
   }
 
   .paperSelect {
-    margin-top: 0;
-  }
-
-  .applyButton {
     margin-top: 0;
   }
 
