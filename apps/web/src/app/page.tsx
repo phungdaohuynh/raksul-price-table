@@ -1,9 +1,15 @@
 "use client";
 
-import { PAPER_SIZES, type PaperSize, type Price } from "@raksul-price-table/api";
+import {
+  formatNumberWithCommas,
+  PAPER_SIZES,
+  type PaperSize,
+  type Price
+} from "@raksul-price-table/api";
 import { usePricesQuery } from "@raksul-price-table/api/react";
 import {
   Button,
+  Select,
   Table,
   TableBody,
   TableCell,
@@ -14,72 +20,201 @@ import {
 import { useMemo, useState } from "react";
 import styles from "./page.module.css";
 
+const INITIAL_ROW_COUNT = 5;
+
+type SelectedPrice = {
+  businessDay: number;
+  price: number;
+  quantity: number;
+};
+
+type HoveredCell = {
+  businessDay: number;
+  quantity: number;
+} | null;
+
 export default function Home() {
   const [paperSize, setPaperSize] = useState<PaperSize>("A4");
+  const [draftPaperSize, setDraftPaperSize] = useState<PaperSize>("A4");
+  const [showAllRows, setShowAllRows] = useState(false);
+  const [selectedPrice, setSelectedPrice] = useState<SelectedPrice | null>(null);
+  const [hoveredCell, setHoveredCell] = useState<HoveredCell>(null);
   const pricesQuery = usePricesQuery({ paperSize });
   const table = useMemo(
     () => createPriceTable(pricesQuery.data?.prices),
     [pricesQuery.data?.prices]
   );
+  const visibleRows = showAllRows ? table.rows : table.rows.slice(0, INITIAL_ROW_COUNT);
   const columnCount = Math.max(table.businessDays.length + 1, 1);
   const isInitialLoading = pricesQuery.isPending && !pricesQuery.data;
+  const isUpdating = pricesQuery.isFetching && !isInitialLoading;
+  const canSeeMore = !showAllRows && table.rows.length > INITIAL_ROW_COUNT;
+
+  function applyPaperSize() {
+    setPaperSize(draftPaperSize);
+    setShowAllRows(false);
+    setSelectedPrice(null);
+    setHoveredCell(null);
+  }
 
   return (
     <main className={styles.page}>
-      <section className={styles.shell}>
-        <h1 className={styles.title}>Raksul Price Table</h1>
-        <div className={styles.toolbar}>
-          <div className={styles.paperSizeGroup} aria-label="Paper size">
-            {PAPER_SIZES.map((size) => (
-              <Button
-                aria-pressed={paperSize === size}
-                className={paperSize === size ? styles.paperSizeActive : styles.paperSizeButton}
-                key={size}
-                onClick={() => setPaperSize(size)}
-              >
-                {size}
-              </Button>
-            ))}
-          </div>
-          <div
-            aria-live="polite"
-            className={pricesQuery.isFetching && !isInitialLoading ? styles.syncing : styles.synced}
-          >
-            Updating...
-          </div>
-        </div>
-        <div className={styles.tableWrap}>
-          <Table aria-busy={pricesQuery.isFetching}>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Quantity</TableHead>
-                {table.businessDays.map((businessDay) => (
-                  <TableHead key={businessDay}>{formatBusinessDay(businessDay)}</TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isInitialLoading ? (
-                <StatusRow colSpan={columnCount}>Loading prices...</StatusRow>
-              ) : pricesQuery.isError ? (
-                <StatusRow colSpan={columnCount}>Unable to load prices.</StatusRow>
-              ) : table.rows.length === 0 ? (
-                <StatusRow colSpan={columnCount}>No prices available.</StatusRow>
-              ) : (
-                table.rows.map((row) => (
-                  <TableRow key={row.quantity}>
-                    <TableCell>{row.quantity.toLocaleString()}</TableCell>
+      <section className={styles.shell} aria-labelledby="page-title">
+        <h1 className={styles.title} id="page-title">
+          Raksul Price Table
+        </h1>
+        <div className={styles.contentGrid}>
+          <aside className={styles.paperPanel}>
+            <h2 className={styles.panelTitle}>Select paper size</h2>
+            <Select
+              aria-label="Paper size"
+              className={styles.paperSelect}
+              onChange={(event) => setDraftPaperSize(event.target.value as PaperSize)}
+              value={draftPaperSize}
+            >
+              {PAPER_SIZES.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </Select>
+            <Button className={styles.applyButton} onClick={applyPaperSize}>
+              Apply
+            </Button>
+          </aside>
+
+          <section className={styles.tablePanel} aria-labelledby="price-table-title">
+            <div className={styles.tablePanelHeader}>
+              <h2 className={styles.panelTitle} id="price-table-title">
+                Price table
+              </h2>
+              <div aria-live="polite" className={isUpdating ? styles.syncing : styles.synced}>
+                Updating...
+              </div>
+            </div>
+            <div className={styles.tableWrap}>
+              <Table aria-busy={pricesQuery.isFetching}>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Quantity</TableHead>
                     {table.businessDays.map((businessDay) => (
-                      <TableCell key={businessDay}>
-                        {formatPrice(row.pricesByBusinessDay.get(businessDay))}
-                      </TableCell>
+                      <TableHead
+                        className={
+                          hoveredCell?.businessDay === businessDay
+                            ? styles.weakHighlight
+                            : undefined
+                        }
+                        data-highlighted={
+                          hoveredCell?.businessDay === businessDay ? "true" : undefined
+                        }
+                        key={businessDay}
+                      >
+                        {formatBusinessDay(businessDay)}
+                      </TableHead>
                     ))}
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                </TableHeader>
+                <TableBody className={styles.tableBody}>
+                  {isInitialLoading ? (
+                    <StatusRow colSpan={columnCount}>Loading prices...</StatusRow>
+                  ) : pricesQuery.isError ? (
+                    <StatusRow colSpan={columnCount}>Unable to load prices.</StatusRow>
+                  ) : table.rows.length === 0 ? (
+                    <StatusRow colSpan={columnCount}>No prices available.</StatusRow>
+                  ) : (
+                    visibleRows.map((row) => (
+                      <TableRow key={row.quantity}>
+                        <TableCell
+                          className={
+                            hoveredCell?.quantity === row.quantity
+                              ? styles.weakHighlight
+                              : undefined
+                          }
+                          data-highlighted={
+                            hoveredCell?.quantity === row.quantity ? "true" : undefined
+                          }
+                        >
+                          {formatNumberWithCommas(row.quantity)}
+                        </TableCell>
+                        {table.businessDays.map((businessDay) => {
+                          const price = row.pricesByBusinessDay.get(businessDay);
+                          const isSelected =
+                            selectedPrice?.quantity === row.quantity &&
+                            selectedPrice.businessDay === businessDay;
+                          const isHovered =
+                            hoveredCell?.quantity === row.quantity &&
+                            hoveredCell.businessDay === businessDay;
+                          const isWeakHighlighted =
+                            !isHovered &&
+                            (hoveredCell?.quantity === row.quantity ||
+                              hoveredCell?.businessDay === businessDay);
+
+                          return (
+                            <TableCell
+                              aria-pressed={isSelected}
+                              className={getPriceCellClassName({
+                                isHovered,
+                                isSelected,
+                                isWeakHighlighted
+                              })}
+                              data-highlighted={isWeakHighlighted ? "true" : undefined}
+                              data-hovered={isHovered ? "true" : undefined}
+                              data-selected={isSelected ? "true" : undefined}
+                              key={businessDay}
+                              onClick={() => {
+                                if (price !== undefined) {
+                                  setSelectedPrice({
+                                    businessDay,
+                                    price,
+                                    quantity: row.quantity
+                                  });
+                                }
+                              }}
+                              onKeyDown={(event) => {
+                                if (
+                                  price !== undefined &&
+                                  (event.key === "Enter" || event.key === " ")
+                                ) {
+                                  event.preventDefault();
+                                  setSelectedPrice({
+                                    businessDay,
+                                    price,
+                                    quantity: row.quantity
+                                  });
+                                }
+                              }}
+                              onMouseEnter={() =>
+                                setHoveredCell({ businessDay, quantity: row.quantity })
+                              }
+                              onMouseLeave={() => setHoveredCell(null)}
+                              role="button"
+                              tabIndex={0}
+                            >
+                              {formatPrice(price)}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+            {canSeeMore ? (
+              <Button className={styles.seeMoreButton} onClick={() => setShowAllRows(true)}>
+                See more
+              </Button>
+            ) : null}
+          </section>
         </div>
+
+        <section className={styles.orderBar} aria-label="Order summary">
+          <p className={styles.orderPrice}>
+            Order price:{" "}
+            <span>{selectedPrice ? `¥${formatNumberWithCommas(selectedPrice.price)}` : "-"}</span>
+          </p>
+          <Button className={styles.cartButton}>Cart</Button>
+        </section>
       </section>
     </main>
   );
@@ -125,10 +260,29 @@ function StatusRow({ children, colSpan }: { children: string; colSpan: number })
   );
 }
 
+function getPriceCellClassName({
+  isHovered,
+  isSelected,
+  isWeakHighlighted
+}: {
+  isHovered: boolean;
+  isSelected: boolean;
+  isWeakHighlighted: boolean;
+}) {
+  return [
+    styles.priceCell,
+    isSelected ? styles.selectedCell : undefined,
+    isHovered ? styles.hoveredCell : undefined,
+    isWeakHighlighted ? styles.weakHighlight : undefined
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
 function formatBusinessDay(businessDay: number) {
   return `${businessDay} business ${businessDay === 1 ? "day" : "days"}`;
 }
 
 function formatPrice(price: number | undefined) {
-  return price === undefined ? "-" : price.toLocaleString();
+  return price === undefined ? "-" : formatNumberWithCommas(price);
 }
