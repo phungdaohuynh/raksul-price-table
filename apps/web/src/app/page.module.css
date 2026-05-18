@@ -156,6 +156,10 @@
   padding: 20px;
 }
 
+.orderText {
+  overflow-wrap: anywhere;
+}
+
 .cartButton {
   width: 84px;
 }
@@ -165,9 +169,16 @@
     padding: 20px;
   }
 
+  .shell {
+    height: auto;
+    min-height: calc(100vh - 40px);
+    grid-template-rows: auto auto;
+  }
+
   .contentGrid {
     grid-template-columns: 1fr;
     gap: 20px;
+    min-height: auto;
     overflow: visible;
   }
 
@@ -185,6 +196,7 @@
   }
 
   .tablePanel {
+    height: 420px;
     min-height: 420px;
     padding: 20px;
   }
@@ -196,5 +208,9 @@
   .orderBar {
     min-height: auto;
     flex-wrap: wrap;
+  }
+
+  .orderText {
+    font-size: 20px;
   }
 }

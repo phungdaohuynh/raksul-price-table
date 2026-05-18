@@ -217,7 +217,7 @@ export default function Home() {
         </div>
 
         <section className={styles.orderBar} aria-label="Order summary">
-          <Typography variant="order">
+          <Typography className={styles.orderText} variant="order">
             {selectedPrice ? (
               <>
                 Order price: <span>¥{formatNumberWithCommas(selectedPrice.price)}</span>

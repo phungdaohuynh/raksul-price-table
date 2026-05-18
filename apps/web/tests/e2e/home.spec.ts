@@ -77,6 +77,32 @@ test("shows more quantity rows when clicking see more", async ({ page }) => {
     .toBe(true);
 });
 
+test("keeps the mobile layout usable with a scrollable table body", async ({ page }) => {
+  await mockPricesApi(page);
+  await page.setViewportSize({ height: 568, width: 320 });
+
+  await page.goto("/");
+  await page.getByRole("button", { name: "See more" }).click();
+
+  await expect(page.getByRole("button", { name: "See more" })).toHaveCount(0);
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const documentElement = document.documentElement;
+        const tableBody = document.querySelector("tbody");
+
+        return {
+          hasHorizontalOverflow: documentElement.scrollWidth > documentElement.clientWidth,
+          hasTableBodyScroll: tableBody ? tableBody.scrollHeight > tableBody.clientHeight : false
+        };
+      })
+    )
+    .toEqual({
+      hasHorizontalOverflow: false,
+      hasTableBodyScroll: true
+    });
+});
+
 test("highlights the hovered price cell and related row and column", async ({ page }) => {
   await mockPricesApi(page);
 
