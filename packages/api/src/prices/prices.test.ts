@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { fetchPrices } from "./prices";
-import type { PricesResponse } from "./types";
+import { fetchPrices } from ".";
+import type { PricesResponse } from "../types";
 
 describe("fetchPrices", () => {
   it("appends a normalized paper_size query parameter", async () => {

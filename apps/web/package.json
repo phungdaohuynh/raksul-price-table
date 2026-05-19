@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@raksul-price-table/api": "workspace:*",
+    "@raksul-price-table/shared": "workspace:*",
     "@raksul-price-table/ui": "workspace:*",
     "@tanstack/react-query": "^5.100.10",
     "next": "^16.2.6",

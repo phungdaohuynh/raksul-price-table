@@ -6,7 +6,6 @@ test("loads the price table layout", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Select paper size" })).toBeVisible();
   await expect(page.getByRole("heading", { exact: true, name: "Price table" })).toBeVisible();
   await expect(page.getByText("Select a price to continue")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Cart" })).toHaveCount(0);
 });
 
 test("updates another paper size immediately and keeps the current table while updating", async ({
@@ -36,13 +35,11 @@ test("resets selection and collapsed rows when changing paper size", async ({ pa
 
   await expect(page.getByRole("cell", { name: "600", exact: true })).toBeVisible();
   await expect(page.getByText("Order price: ¥1,000")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Cart" })).toBeVisible();
 
   await page.getByLabel("Paper size").selectOption("A5");
 
   await expect(page.getByRole("button", { name: "2,000" })).toBeVisible();
   await expect(page.getByText("Select a price to continue")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Cart" })).toHaveCount(0);
   await expect(page.getByRole("cell", { name: "600", exact: true })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "See more" })).toBeVisible();
 });
@@ -58,7 +55,6 @@ test("selects a price cell and displays the order price", async ({ page }) => {
     "true"
   );
   await expect(page.getByText("Order price: ¥1,000")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Cart" })).toBeVisible();
 });
 
 test("shows more quantity rows when clicking see more", async ({ page }) => {

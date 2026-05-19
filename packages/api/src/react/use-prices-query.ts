@@ -1,9 +1,9 @@
 "use client";
 
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import type { PaperSize } from "@raksul-price-table/shared";
 import { fetchPrices } from "../prices";
 import { priceQueryKeys } from "../query-keys";
-import type { PaperSize } from "../types";
 
 export type UsePricesQueryOptions = {
   paperSize?: PaperSize | string | null;

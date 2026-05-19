@@ -1,5 +1,5 @@
-import { normalizePaperSize } from "./paper-size";
-import type { PaperSize, PricesResponse } from "./types";
+import { normalizePaperSize, type PaperSize } from "@raksul-price-table/shared";
+import type { PricesResponse } from "../types";
 
 export type FetchPricesOptions = {
   paperSize?: PaperSize | string | null;

@@ -83,6 +83,9 @@ importers:
       '@raksul-price-table/api':
         specifier: workspace:*
         version: link:../../packages/api
+      '@raksul-price-table/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@raksul-price-table/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -104,12 +107,17 @@ importers:
 
   packages/api:
     dependencies:
+      '@raksul-price-table/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@tanstack/react-query':
         specifier: ^5.100.10
         version: 5.100.10(react@19.2.6)
       react:
         specifier: ^19.2.6
         version: 19.2.6
+
+  packages/shared: {}
 
   packages/ui:
     dependencies:

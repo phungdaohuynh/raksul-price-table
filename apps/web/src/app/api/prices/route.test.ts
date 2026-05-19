@@ -3,11 +3,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const apiMocks = vi.hoisted(() => ({
-  fetchPrices: vi.fn(),
+  fetchPrices: vi.fn()
+}));
+
+const sharedMocks = vi.hoisted(() => ({
   normalizePaperSize: vi.fn((value: string | null) => value?.toUpperCase() ?? "A4")
 }));
 
 vi.mock("@raksul-price-table/api", () => apiMocks);
+vi.mock("@raksul-price-table/shared", () => sharedMocks);
 
 describe("GET /api/prices", () => {
   const originalPricesApiUrl = process.env.RAKSUL_PRICES_API_URL;
@@ -15,7 +19,7 @@ describe("GET /api/prices", () => {
   beforeEach(() => {
     vi.resetModules();
     apiMocks.fetchPrices.mockReset();
-    apiMocks.normalizePaperSize.mockClear();
+    sharedMocks.normalizePaperSize.mockClear();
   });
 
   afterEach(() => {
@@ -39,7 +43,7 @@ describe("GET /api/prices", () => {
 
   it("fetches prices with the normalized paper size", async () => {
     process.env.RAKSUL_PRICES_API_URL = "https://example.com/prices";
-    apiMocks.normalizePaperSize.mockReturnValue("B4");
+    sharedMocks.normalizePaperSize.mockReturnValue("B4");
     apiMocks.fetchPrices.mockResolvedValue({ paper_size: "b4", prices: [] });
     const { GET } = await import("./route");
 
@@ -47,7 +51,7 @@ describe("GET /api/prices", () => {
 
     await expect(response.json()).resolves.toEqual({ paper_size: "b4", prices: [] });
     expect(response.status).toBe(200);
-    expect(apiMocks.normalizePaperSize).toHaveBeenCalledWith("b4");
+    expect(sharedMocks.normalizePaperSize).toHaveBeenCalledWith("b4");
     expect(apiMocks.fetchPrices).toHaveBeenCalledWith({
       endpoint: "https://example.com/prices",
       paperSize: "B4"
@@ -56,7 +60,7 @@ describe("GET /api/prices", () => {
 
   it("returns 502 when the upstream prices API fails", async () => {
     process.env.RAKSUL_PRICES_API_URL = "https://example.com/prices";
-    apiMocks.normalizePaperSize.mockReturnValue("A4");
+    sharedMocks.normalizePaperSize.mockReturnValue("A4");
     apiMocks.fetchPrices.mockRejectedValue(new Error("upstream failed"));
     const { GET } = await import("./route");
 

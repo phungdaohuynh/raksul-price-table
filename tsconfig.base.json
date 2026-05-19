@@ -16,6 +16,8 @@
     "paths": {
       "@raksul-price-table/api": ["packages/api/src/index.ts"],
       "@raksul-price-table/api/*": ["packages/api/src/*"],
+      "@raksul-price-table/shared": ["packages/shared/src/index.ts"],
+      "@raksul-price-table/shared/*": ["packages/shared/src/*"],
       "@raksul-price-table/ui": ["packages/ui/src/index.ts"],
       "@raksul-price-table/ui/*": ["packages/ui/src/*"]
     }

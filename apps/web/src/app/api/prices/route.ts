@@ -1,4 +1,5 @@
-import { fetchPrices, normalizePaperSize } from "@raksul-price-table/api";
+import { fetchPrices } from "@raksul-price-table/api";
+import { normalizePaperSize } from "@raksul-price-table/shared";
 import { NextResponse } from "next/server";
 
 const pricesApiUrl = process.env.RAKSUL_PRICES_API_URL;

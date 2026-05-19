@@ -1,5 +1,4 @@
-import { normalizePaperSize } from "./paper-size";
-import type { PaperSize } from "./types";
+import { normalizePaperSize, type PaperSize } from "@raksul-price-table/shared";
 
 export const priceQueryKeys = {
   all: ["prices"] as const,

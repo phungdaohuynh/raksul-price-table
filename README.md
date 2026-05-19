@@ -24,6 +24,7 @@ apps/
 
 packages/
   api/                 API client, types, and query hooks
+  shared/              Shared utilities
   ui/                  Shared UI components, organized by component folder
 ```
 
@@ -32,8 +33,9 @@ Important files:
 - `apps/web/src/app/page.tsx`: main price table screen.
 - `apps/web/src/app/api/prices/route.ts`: API route that proxies requests to the Raksul prices API.
 - `packages/api/src/prices.ts`: prices API client.
-- `packages/api/src/paper-size.ts`: paper size normalization with `A4` fallback.
 - `packages/api/src/react/use-prices-query.ts`: TanStack Query hook for prices.
+- `packages/shared/src/paper-size/index.ts`: paper size constants, type, and normalization with `A4` fallback.
+- `packages/shared/src/utils/number-format.ts`: shared comma-separated number formatter.
 - `packages/ui/src/*/index.tsx`: shared UI components such as Button, Select, Table, Tooltip, and Typography.
 - `.github/workflows/ci.yml`: GitHub Actions workflow for typecheck, lint, and coverage tests.
 
@@ -210,7 +212,7 @@ The project includes:
 - Playwright E2E tests for:
   - application shell rendering
   - price updates when changing paper size
-  - selected price display and Cart visibility
+  - selected price display
   - selected state reset when changing paper size
   - See more row expansion and table body scrolling
   - hovered cell, row, and column highlighting
@@ -283,7 +285,6 @@ Workflow file:
 - Initial loading, empty, and error states are rendered inside the table.
 - The table wrapper supports horizontal scrolling on smaller screens.
 - Changing paper size resets the selected price and collapses expanded rows.
-- `Cart` is hidden until a price is selected.
 
 ## Troubleshooting
 

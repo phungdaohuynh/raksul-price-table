@@ -160,10 +160,6 @@
   overflow-wrap: anywhere;
 }
 
-.cartButton {
-  width: 84px;
-}
-
 @media (max-width: 860px) {
   .page {
     padding: 20px;

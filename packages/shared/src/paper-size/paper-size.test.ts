@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizePaperSize } from "./paper-size";
+import { normalizePaperSize } from ".";
 
 describe("normalizePaperSize", () => {
   it.each([

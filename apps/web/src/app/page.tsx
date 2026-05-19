@@ -1,12 +1,8 @@
 "use client";
 
-import {
-  formatNumberWithCommas,
-  PAPER_SIZES,
-  type PaperSize,
-  type Price
-} from "@raksul-price-table/api";
+import type { Price } from "@raksul-price-table/api";
 import { usePricesQuery } from "@raksul-price-table/api/react";
+import { formatNumberWithCommas, PAPER_SIZES, type PaperSize } from "@raksul-price-table/shared";
 import {
   Button,
   Select,
@@ -226,7 +222,6 @@ export default function Home() {
               "Select a price to continue"
             )}
           </Typography>
-          {selectedPrice ? <Button className={styles.cartButton}>Cart</Button> : null}
         </section>
       </section>
     </main>
